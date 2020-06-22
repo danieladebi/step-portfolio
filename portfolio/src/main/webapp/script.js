@@ -17,7 +17,7 @@
  */
 function addRandomGreeting() {
   const greetings =
-      ["I'm a Nigerian-American", "My favorite sports teams are the Eagles and 76ers.",
+      ["I'm a Nigerian-American.", "My favorite sports teams are the Eagles and 76ers.",
       "My favorite color is red.", "I used to play for MIT's football team."];
 
   // Pick a random greeting.
