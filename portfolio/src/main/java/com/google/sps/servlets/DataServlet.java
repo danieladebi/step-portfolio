@@ -20,13 +20,41 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import java.util.ArrayList;
+
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  private ArrayList<String> favoritesList = new ArrayList<String>();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello Daniel!</h1>");
+  //  response.setContentType("text/html;");
+  //  response.getWriter().println("<h1>Hello Daniel!</h1>");
+
+    initializeFavoritesList();
+    String json = convertToJSON();
+
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
+  }
+
+  private String convertToJSON() {
+    String json = "{";
+    json += "\"Favorite Food\": " + "\"" + favoritesList.get(0) + "\", ";
+    json += "\"Favorite Number\": " + "\"" + favoritesList.get(1) + "\", ";
+    json += "\"Favorite Programming Language\": " + "\"" + favoritesList.get(2) + "\"";
+    json += "}";
+    return json;
+  }
+
+  private void initializeFavoritesList() {
+    if (favoritesList.isEmpty()) {
+        favoritesList.add("Pizza");
+        favoritesList.add("7");
+        favoritesList.add("C++");
+    }
   }
 }

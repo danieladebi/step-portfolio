@@ -33,3 +33,25 @@ async function greetingMessage() {
     const text = await response.text();
     document.getElementById("java-message").innerHTML = text;
 }
+
+async function getFavorites() {
+    const response = await fetch('/data');
+    const favorites = await response.json();
+    console.log(favorites); 
+    
+    const favoritesListElement = document.getElementById('favorites-container');
+    favoritesListElement.innerHTML = '';
+    favoritesListElement.appendChild(
+        createListElement('Favorite Food: ' + favorites['Favorite Food']));
+    favoritesListElement.appendChild(
+        createListElement('Favorite Number: ' + favorites['Favorite Number']));
+    favoritesListElement.appendChild(
+        createListElement('Favorite Programming Language: ' + favorites['Favorite Programming Language']));
+ 
+}
+
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
