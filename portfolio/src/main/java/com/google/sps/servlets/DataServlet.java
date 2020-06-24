@@ -23,38 +23,45 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-
-  private ArrayList<String> favoritesList = new ArrayList<String>();
+  
+  private ArrayList<String> commentsList = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  //  response.setContentType("text/html;");
-  //  response.getWriter().println("<h1>Hello Daniel!</h1>");
-
-    initializeFavoritesList();
-    String json = convertToJSON();
-
+ 
     response.setContentType("application/json;");
+    String json = convertToJson();
+
     response.getWriter().println(json);
   }
+  
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-  private String convertToJSON() {
-    String json = "{";
-    json += "\"Favorite Food\": " + "\"" + favoritesList.get(0) + "\", ";
-    json += "\"Favorite Number\": " + "\"" + favoritesList.get(1) + "\", ";
-    json += "\"Favorite Programming Language\": " + "\"" + favoritesList.get(2) + "\"";
-    json += "}";
-    return json;
+    // Get the input from the form.
+    response.setContentType("text/html");
+    String text = request.getParameter("comment-input");
+    commentsList.add("\"" + text + "\"");
+
+    // Send data to Datastore
+    Entity commentEntity = new Entity("Comment");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
   }
 
-  private void initializeFavoritesList() {
-    if (favoritesList.isEmpty()) {
-        favoritesList.add("Pizza");
-        favoritesList.add("7");
-        favoritesList.add("C++");
-    }
+  private String convertToJson() {
+    String json = "{ ";
+    json += "\"comments\": " + commentsList + " }";   
+    return json;
   }
 }

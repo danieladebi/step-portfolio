@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getComments()">
     <div id="content">
       <center>
         <h1>Ikechukwu Daniel Adebi - Portfolio</h1>
@@ -16,10 +16,10 @@
       <center>  
         <!-- <button onclick="greetingMessage()">Greeting</button>
         <div id="java-message"></div> -->
-        <br />
+        <!-- <br />
         <button onclick="getFavorites()">Favorites</button>
         <br />
-        <div id="favorites-container"></div>
+        <div id="favorites-container"></div> -->
       </center>
       <p> Hello! My name is Daniel Adebi and this is my STEP portfolio. I am a member of 
         MIT's class of 2022, and I am a double major in computer science and physics.
@@ -46,6 +46,17 @@
        <p>Click the button below to get a random fact about me.</p>
       <button onclick="addRandomGreeting()">Random Fact Button</button> 
       <div id="greeting-container"></div>
+
+      <div id="comments-section"></div>
+      <form action="/data" method="POST">
+
+      <p>Comments:</p>
+      <textarea name="comment-input"></textarea>
+
+      <br/><br/>
+
+      <input type="submit" />
+    </form>
     </div>
   </body>
 </html>
