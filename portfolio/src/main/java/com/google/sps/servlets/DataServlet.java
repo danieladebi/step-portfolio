@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -36,10 +39,26 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
  
-    response.setContentType("application/json;");
-    String json = convertToJson();
+    // response.setContentType("application/json;");
+    // String json = convertToJson();
 
-    response.getWriter().println(json);
+    // response.getWriter().println(json);
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    ArrayList<String> comments = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      String content = (String) entity.getProperty("content");
+      long timestamp = (long) entity.getProperty("timestamp");
+
+      comments.add("\"" + content + "\"");
+    }
+
+    response.setContentType("application/json;");
+    response.getWriter().println(convertToJson(comments));
   }
   
   @Override
@@ -50,18 +69,22 @@ public class DataServlet extends HttpServlet {
     String text = request.getParameter("comment-input");
     commentsList.add("\"" + text + "\"");
 
+    long timestamp = System.currentTimeMillis();
+
     // Send data to Datastore
     Entity commentEntity = new Entity("Comment");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    commentEntity.setProperty("content", text);
+    commentEntity.setProperty("timestamp", timestamp);
     datastore.put(commentEntity);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
   }
 
-  private String convertToJson() {
+  private String convertToJson(ArrayList<String> comments) {
     String json = "{ ";
-    json += "\"comments\": " + commentsList + " }";   
+    json += "\"comments\": " + comments + " }";   
     return json;
   }
 }
