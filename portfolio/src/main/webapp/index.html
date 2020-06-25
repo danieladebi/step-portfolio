@@ -13,14 +13,6 @@
         <p><b>About Me</b></p>
         <img src="/images/profilepic.jpg" height=200 alt="My profile pic" />
       </center>
-      <center>  
-        <!-- <button onclick="greetingMessage()">Greeting</button>
-        <div id="java-message"></div> -->
-        <!-- <br />
-        <button onclick="getFavorites()">Favorites</button>
-        <br />
-        <div id="favorites-container"></div> -->
-      </center>
       <p> Hello! My name is Daniel Adebi and this is my STEP portfolio. I am a member of 
         MIT's class of 2022, and I am a double major in computer science and physics.
       </p>
@@ -49,9 +41,20 @@
 
       <div id="comments-section"></div>
       <form action="/data" method="POST">
+      <p>Max Comment Count:</p>
+      <!-- <select type="number" name="max-comments" id="max-comments" onchange="getComments()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select> -->
+      <input type="number" name="max-comments" id="max-comments" onchange="getComments()" min="1" required=true> 
+
+      <br />
 
       <p>Comments:</p>
-      <textarea name="comment-input"></textarea>
+      <textarea name="comment-input" value="Make a comment"></textarea>
 
       <br/><br/>
 

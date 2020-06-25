@@ -35,21 +35,39 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public class DataServlet extends HttpServlet {
   
   private ArrayList<String> commentsList = new ArrayList<String>();
+  private int maxCommentCount;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     ArrayList<String> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      String content = (String) entity.getProperty("content");
-      long timestamp = (long) entity.getProperty("timestamp");
 
-      comments.add("\"" + content + "\"");
+    maxCommentCount = getMaxComments(request);
+    if (maxCommentCount == -1) {
+        //maxCommentCount = 1;
+        response.setContentType("text/html");
+        response.getWriter().println("Please enter an integer between 1 and 3.");
+ 
+        return;
+    }
+
+    int count = 0;
+    for (Entity entity : results.asIterable()) {
+        if (count < maxCommentCount) {
+            long id = entity.getKey().getId();
+            String content = (String) entity.getProperty("content");
+            long timestamp = (long) entity.getProperty("timestamp");
+            
+            comments.add("\"" + content + "\"");
+            count += 1;
+        } else {
+            break;
+        }
     }
 
     response.setContentType("application/json;");
@@ -61,6 +79,7 @@ public class DataServlet extends HttpServlet {
 
     // Get the input from the form.
     response.setContentType("text/html");
+
     String text = request.getParameter("comment-input");
     commentsList.add("\"" + text + "\"");
 
@@ -79,7 +98,26 @@ public class DataServlet extends HttpServlet {
 
   private String convertToJson(ArrayList<String> comments) {
     String json = "{ ";
-    json += "\"comments\": " + comments + " }";   
+    json += "\"comments\": " + comments + " }";  
     return json;
+  }
+
+  private int getMaxComments(HttpServletRequest request) {
+    String maxCommentsString = request.getParameter("max-comments");
+
+    int maxCommentCount;
+    try {
+      maxCommentCount = Integer.parseInt(maxCommentsString);
+    } catch (NumberFormatException e) {
+      System.err.println("Could not convert to int: " + maxCommentsString);
+      return -1;
+    }
+
+    if (maxCommentCount < 1) {
+      System.err.println("Option is out of range: " + maxCommentsString);
+      return -1;
+    }
+    
+    return maxCommentCount; 
   }
 }
