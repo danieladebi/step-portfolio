@@ -8,3 +8,13 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+body {
+    background-color: #ff7171;
+}
+
+input[type="submit"] {
+    background-color: white;
+    border-style: solid;
+    border-color: black;
+}

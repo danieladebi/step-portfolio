@@ -52,6 +52,12 @@ async function getComments() {
 
 }
 
+async function deleteComments() {
+    const params = new URLSearchParams();
+    fetch('/delete-data', {method: 'POST', body: params});
+    location.reload();
+}
+
 function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -35,7 +37,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public class DataServlet extends HttpServlet {
   
   private ArrayList<String> commentsList = new ArrayList<String>();
-  private int maxCommentCount;
+  private int maxCommentCount = 1;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -45,13 +47,13 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    ArrayList<String> comments = new ArrayList<>();
+    ArrayList<String> comments = new ArrayList<String>();
 
     maxCommentCount = getMaxComments(request);
     if (maxCommentCount == -1) {
         //maxCommentCount = 1;
         response.setContentType("text/html");
-        response.getWriter().println("Please enter an integer between 1 and 3.");
+        response.getWriter().println("Please enter a number greater than 1.");
  
         return;
     }
