@@ -25,21 +25,55 @@ import java.util.ArrayList;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   
   private ArrayList<String> commentsList = new ArrayList<String>();
+  private int maxCommentCount = 1;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
- 
-    response.setContentType("application/json;");
-    String json = convertToJson();
 
-    response.getWriter().println(json);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    ArrayList<String> comments = new ArrayList<String>();
+
+    maxCommentCount = getMaxComments(request);
+    if (maxCommentCount == -1) {
+        //maxCommentCount = 1;
+        response.setContentType("text/html");
+        response.getWriter().println("Please enter a number greater than 1.");
+ 
+        return;
+    }
+
+    int count = 0;
+    for (Entity entity : results.asIterable()) {
+        if (count < maxCommentCount) {
+            long id = entity.getKey().getId();
+            String content = (String) entity.getProperty("content");
+            long timestamp = (long) entity.getProperty("timestamp");
+            
+            comments.add("\"" + content + "\"");
+            count += 1;
+        } else {
+            break;
+        }
+    }
+
+    response.setContentType("application/json;");
+    response.getWriter().println(convertToJson(comments));
   }
   
   @Override
@@ -47,21 +81,45 @@ public class DataServlet extends HttpServlet {
 
     // Get the input from the form.
     response.setContentType("text/html");
+
     String text = request.getParameter("comment-input");
     commentsList.add("\"" + text + "\"");
+
+    long timestamp = System.currentTimeMillis();
 
     // Send data to Datastore
     Entity commentEntity = new Entity("Comment");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    commentEntity.setProperty("content", text);
+    commentEntity.setProperty("timestamp", timestamp);
     datastore.put(commentEntity);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
   }
 
-  private String convertToJson() {
+  private String convertToJson(ArrayList<String> comments) {
     String json = "{ ";
-    json += "\"comments\": " + commentsList + " }";   
+    json += "\"comments\": " + comments + " }";  
     return json;
+  }
+
+  private int getMaxComments(HttpServletRequest request) {
+    String maxCommentsString = request.getParameter("max-comments");
+
+    int maxCommentCount;
+    try {
+      maxCommentCount = Integer.parseInt(maxCommentsString);
+    } catch (NumberFormatException e) {
+      System.err.println("Could not convert to int: " + maxCommentsString);
+      return -1;
+    }
+
+    if (maxCommentCount < 1) {
+      System.err.println("Option is out of range: " + maxCommentsString);
+      return -1;
+    }
+    
+    return maxCommentCount; 
   }
 }

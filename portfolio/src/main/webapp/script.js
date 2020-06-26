@@ -34,35 +34,28 @@ async function greetingMessage() {
     document.getElementById("java-message").innerHTML = text;
 }
 
-// async function getFavorites() {
-//     const response = await fetch('/data');
-//     const favorites = await response.json();
-//     console.log(favorites); 
-    
-//     const favoritesListElement = document.getElementById('favorites-container');
-//     favoritesListElement.innerHTML = '';
-//     favoritesListElement.appendChild(
-//         createListElement('Favorite Food: ' + favorites['Favorite Food']));
-//     favoritesListElement.appendChild(
-//         createListElement('Favorite Number: ' + favorites['Favorite Number']));
-//     favoritesListElement.appendChild(
-//         createListElement('Favorite Programming Language: ' + favorites['Favorite Programming Language']));
- 
-// }
-
 async function getComments() {
-    const response = await fetch('/data');
-    const commentList = await response.json();
-    // console.log(response);
-    console.log(commentList);
+    const maxCommentCount = document.getElementById('max-comments').value;
+    console.log(`max comment count: ${maxCommentCount}`);
+
+    const response = await fetch(`/data?max-comments=${maxCommentCount}`);
+    const commentInfo = await response.json();
+    console.log(commentInfo);
 
     const commentsListElements = document.getElementById('comments-section');
+
     commentsListElements.innerHTML = '';
-    for (const comment of commentList["comments"]) {
+    for (let comment of commentInfo["comments"]) {
         console.log(comment)
-        commentsListElements.appendChild(createListElement(comment));
+        commentsListElements.appendChild(createListElement(comment));        
     }
 
+}
+
+async function deleteComments() {
+    const params = new URLSearchParams();
+    fetch('/delete-data', {method: 'POST', body: params});
+    location.reload();
 }
 
 function createListElement(text) {
