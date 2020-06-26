@@ -33,7 +33,13 @@ input[type='submit'] {
     margin-top: 15px;
 }
 
-#chart-container {
+#college-chart {
+    border: 5px solid black;
+    width: 500px;
+    height: 350px;
+}
+
+#global-warming-chart {
     border: 5px solid black;
     width: 500px;
     height: 350px;
