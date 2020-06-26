@@ -63,3 +63,36 @@ function createListElement(text) {
   liElement.innerText = text;
   return liElement;
 }
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+/** Creates a chart and adds it to the page. */
+function drawChart() {
+  const data = new google.visualization.DataTable();
+  data.addColumn('string', 'Category');
+  data.addColumn('number', 'Count');
+        data.addRows([
+          ['Computer Science', 8],
+          ['Math', 2],
+          ['Physics', 5],
+          ['Chemistry', 1],
+          ['Other', 3]
+        ]);
+
+  const options = {
+    'title': 'College Courses I\'ve Taken',
+    'width':500,
+    'height':350,
+    'backgroundColor': 'yellow',
+    'titleTextStyle': {color: 'black',
+        fontSize: 14,
+        bold: true,
+        italic: false
+        }    
+    };
+
+  const chart = new google.visualization.PieChart(
+      document.getElementById('chart-container'));
+  chart.draw(data, options);
+}
