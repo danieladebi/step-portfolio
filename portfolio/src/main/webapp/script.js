@@ -128,9 +128,39 @@ async function drawGlobalWarmingChart() {
     chart.draw(data, options);
 }
 
+var mitMarker;
 // Creating map
 function createMap() {
-    const map = new google.maps.Map(
-        document.getElementById('portfolio-map'),
-        {center: {lat: 42.3601, lng: -71.0942}, zoom: 16}); 
+    var mitLatLng = {lat: 42.3601, lng: -71.0942};
+
+    const map = new google.maps.Map(document.getElementById('portfolio-map'),
+        {center: mitLatLng, 
+        mapTypeId: 'terrain',
+        zoom: 16}); 
+
+    mitMarker = new google.maps.Marker({
+        position: mitLatLng,
+        map: map,
+        animation: google.maps.Animation.DROP,
+        title: 'MIT (My University)'
+    });
+
+    contentString = "MIT is where I currently go to college." + 
+    "<br />It is located in Cambridge, Massachusetts.";
+
+    var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+
+    mitMarker.addListener('click', () => {
+        infowindow.open(map, mitMarker);
+    });
+}
+
+function toggleBounce() {
+  if (mitMarker.getAnimation() !== null) {
+    mitMarker.setAnimation(null);
+  } else {
+    mitMarker.setAnimation(google.maps.Animation.BOUNCE);
+  }
 }
