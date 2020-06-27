@@ -29,10 +29,6 @@ input[type='submit'] {
     margin-bottom: 20px;
 }
 
-#charts-button {
-    margin-top: 15px;
-}
-
 #college-chart {
     border: 5px solid black;
     width: 500px;
@@ -43,4 +39,11 @@ input[type='submit'] {
     border: 5px solid black;
     width: 500px;
     height: 350px;
+}
+
+#portfolio-map {
+    width: 800px;
+    height: 500px;
+    margin-top: 50px;
+    border: 6px solid black;
 }

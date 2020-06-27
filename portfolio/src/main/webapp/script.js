@@ -127,3 +127,10 @@ async function drawGlobalWarmingChart() {
     
     chart.draw(data, options);
 }
+
+// Creating map
+function createMap() {
+    const map = new google.maps.Map(
+        document.getElementById('portfolio-map'),
+        {center: {lat: 42.3601, lng: -71.0942}, zoom: 16}); 
+}
