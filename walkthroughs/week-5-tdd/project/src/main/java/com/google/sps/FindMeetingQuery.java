@@ -89,9 +89,7 @@ public final class FindMeetingQuery {
         for (Event event : events) {
             TimeRange eventTime = event.getWhen();
             Set<String> eventAttendees = new HashSet<String>(event.getAttendees());
-            System.out.println("Event Time: " + eventTime);
-            System.out.println("Event Attendees: " + eventAttendees);
-
+          
             for (String attendee : requestAttendees) {
                 if (eventAttendees.contains(attendee)) {
                     invalidTimes.add(eventTime);
