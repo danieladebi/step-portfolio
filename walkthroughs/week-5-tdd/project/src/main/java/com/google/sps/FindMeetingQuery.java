@@ -71,6 +71,7 @@ public final class FindMeetingQuery {
             prevTimeRange = timeRange;
         }
 
+        // Gets last time space (if applicable)
         TimeRange lastTime = TimeRange.fromStartEnd(startTime, TimeRange.END_OF_DAY, true);
         if (lastTime.duration() >= requestDuration) {
             validTimes.add(lastTime);
