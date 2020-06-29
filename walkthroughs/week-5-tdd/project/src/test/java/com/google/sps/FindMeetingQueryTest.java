@@ -345,9 +345,9 @@ public final class FindMeetingQueryTest {
   @Test
   public void noMandatoryMeetingsWithGaps() {
     Collection<Event> events = Arrays.asList(
-        new Event("Event 1", TimeRange.fromStartEnd(TIME_0800AM, TIME_0900AM, false),
+        new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_60_MINUTES),
             Arrays.asList(PERSON_A)),
-        new Event("Event 2", TimeRange.fromStartEnd(TIME_1000AM, TIME_1100AM, false),
+        new Event("Event 2", TimeRange.fromStartDuration(TIME_1000AM, DURATION_60_MINUTES),
             Arrays.asList(PERSON_B))
     );
 
