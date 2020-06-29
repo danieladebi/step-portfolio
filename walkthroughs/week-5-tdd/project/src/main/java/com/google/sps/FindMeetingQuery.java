@@ -34,37 +34,25 @@ public final class FindMeetingQuery {
 
         long requestDuration = request.getDuration();
 
-        // Get all times where a mandatory guest can't make it.
-        Collection<TimeRange> invalidTimes = checkConflicts(events, request, true);;
-        
+        Collection<TimeRange> invalidTimes = checkConflicts(events, request, true);
         Collections.sort((ArrayList) invalidTimes, TimeRange.ORDER_BY_START);
-
-        if (invalidTimes.isEmpty()) {
-            validTimes.add(TimeRange.WHOLE_DAY);
-            return validTimes;
-        }
 
         validTimes = getValidTimes(invalidTimes, requestDuration);
 
         if (request.getOptionalAttendees().isEmpty()) {
             return validTimes;
         } else {
-            if (request.getAttendees().isEmpty()) {
-                invalidTimes = checkConflicts(events, request, false);
-                validTimes = getValidTimes(invalidTimes, requestDuration);
-
+            if (validTimes.contains(TimeRange.WHOLE_DAY)) {
+                validTimes = getValidTimes(checkConflicts(events, request, false), requestDuration);
                 return validTimes;
             }
-            System.out.println(request.getOptionalAttendees());
-
-            Collection<TimeRange> invalidOptionalTimes = checkConflicts(events, request, false);
-            System.out.println(invalidOptionalTimes);
-           
+            Collection<TimeRange> invalidOptionalTimes = checkConflicts(events, request, false);           
             Collection<TimeRange> validOptionalTimes = new ArrayList<>();
+
             for (TimeRange vt : validTimes) {
                 boolean isValid = true;
                 for (TimeRange ivt : invalidOptionalTimes) {
-                    if (ivt.overlaps(vt) || vt.contains(ivt) || ivt.contains(vt)) {
+                    if (vt.overlaps(ivt) || vt.contains(ivt) || ivt.contains(vt)) {
                         isValid = false;
                         break;
                     }
