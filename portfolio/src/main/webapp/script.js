@@ -129,15 +129,37 @@ async function drawGlobalWarmingChart() {
 }
 
 var mitMarker;
+var dormMarker; 
+
+var mitLatLng;
+var dormLatLng;
+
+var directionsRenderer;
+var directionsService;
+
 // Creating map
 function createMap() {
-    var mitLatLng = {lat: 42.3601, lng: -71.0942};
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+
+    mitLatLng = {lat: 42.3601, lng: -71.0942};
+    dormLatLng = {lat: 42.355338, lng: -71.100530};
 
     const map = new google.maps.Map(document.getElementById('portfolio-map'),
-        {center: mitLatLng, 
-        mapTypeId: 'terrain',
-        zoom: 16}); 
+        {
+            center: {
+                lat: (mitLatLng.lat+dormLatLng.lat)/2, 
+                lng: (mitLatLng.lng+dormLatLng.lng)/2
+            }, 
+            mapTypeId: 'terrain',
+            zoom: 16
+        }); 
 
+    directionsRenderer.setMap(map);
+    renderMap(map);
+}
+
+function renderMap(map) {
     mitMarker = new google.maps.Marker({
         position: mitLatLng,
         map: map,
@@ -145,16 +167,51 @@ function createMap() {
         title: 'MIT (My University)'
     });
 
-    contentString = "MIT is where I currently go to college." + 
-    "<br />It is located in Cambridge, Massachusetts.";
+    dormMarker = new google.maps.Marker({
+        position: dormLatLng,
+        map: map,
+        animation: google.maps.Animation.DROP,
+        title: 'New House'
+    });
 
-    var infowindow = new google.maps.InfoWindow({
-        content: contentString
+    campusContentString = "MIT is where I currently go to college." + 
+    "<br />It is located in Cambridge, Massachusetts."
+    "<br />This is main campus.";
+
+    dormInfoString = "This is my dorm, New House." +
+    "<br />It is about 10 minutes, walking distance," +
+    "<br /> away from main campus.";
+
+    var campusInfowindow = new google.maps.InfoWindow({
+        content: campusContentString
+    });
+
+    var dormInfowindow = new google.maps.InfoWindow({
+        content: dormInfoString
     });
 
     mitMarker.addListener('click', () => {
-        infowindow.open(map, mitMarker);
+        campusInfowindow.open(map, mitMarker);
     });
+
+    dormMarker.addListener('click', () => {
+        dormInfowindow.open(map, dormMarker);
+    });
+
+    directionsService.route(
+    {
+      origin: dormLatLng, // Dorm.
+      destination: mitLatLng, // MIT.
+      travelMode: google.maps.TravelMode["WALKING"]
+    },
+    function(response, status) {
+      if (status == "OK") {
+        directionsRenderer.setDirections(response);
+      } else {
+        window.alert("Directions request failed due to " + status);
+      }
+    }
+  );
 }
 
 function toggleBounce() {
