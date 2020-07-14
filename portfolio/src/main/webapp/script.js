@@ -118,11 +118,11 @@ function renderMap(map) {
       "<br /> away from main campus.";
 
   var campusInfowindow = new google.maps.InfoWindow({
-    content: campusContentString
+    content: campusContentString,
   });
 
   var dormInfowindow = new google.maps.InfoWindow({
-    content: dormInfoString
+    content: dormInfoString,
   });
 
   mitMarker.addListener('click', () => {
