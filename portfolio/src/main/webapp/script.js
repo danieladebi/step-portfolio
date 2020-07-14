@@ -64,70 +64,6 @@ function createListElement(text) {
   return liElement;
 }
 
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawCollegeChart);
-google.charts.setOnLoadCallback(drawGlobalWarmingChart);
-
-/** Creates a chart and adds it to the page. */
-function drawCollegeChart() {
-    const data = new google.visualization.DataTable();
-    data.addColumn('string', 'Category');
-    data.addColumn('number', 'Count');
-        data.addRows([
-          ['Computer Science', 8],
-          ['Math', 2],
-          ['Physics', 5],
-          ['Chemistry', 1],
-          ['Other', 3]
-        ]);
-
-    const options = {
-        'title': 'College Courses I\'ve Taken',
-        'width':500,
-        'height':350,
-        'backgroundColor': 'yellow',
-        'titleTextStyle': {color: 'black',
-        fontSize: 14,
-        bold: true,
-        italic: false
-        }    
-    };
-
-    const chart = new google.visualization.PieChart(
-      document.getElementById('college-chart'));
-    chart.draw(data, options);
-}
-
-async function drawGlobalWarmingChart() {
-    const response = await fetch('/global-warming');
-    const globalWarmingTemps = await response.json();
-
-    const data = new google.visualization.DataTable();
-    data.addColumn('string', 'Year');
-    data.addColumn('number', 'Temperatures');
-
-    Object.keys(globalWarmingTemps).forEach((year) => {
-      data.addRow([year, globalWarmingTemps[year]]);
-    });
-
-    const options = {
-        'title': 'Global Warming Temperatures',
-        'width':500,
-        'height':350,
-        'backgroundColor': 'white',
-        'titleTextStyle': {color: 'black',
-            fontSize: 14,
-            bold: true,
-            italic: false
-        }    
-    };
-
-    const chart = new google.visualization.LineChart(
-        document.getElementById('global-warming-chart'));
-    
-    chart.draw(data, options);
-}
-
 var mitMarker;
 var dormMarker; 
 
@@ -220,4 +156,69 @@ function toggleBounce() {
   } else {
     mitMarker.setAnimation(google.maps.Animation.BOUNCE);
   }
+}
+
+// Charts code
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawCollegeChart);
+google.charts.setOnLoadCallback(drawGlobalWarmingChart);
+
+/** Creates a chart and adds it to the page. */
+function drawCollegeChart() {
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Category');
+    data.addColumn('number', 'Count');
+        data.addRows([
+          ['Computer Science', 8],
+          ['Math', 2],
+          ['Physics', 5],
+          ['Chemistry', 1],
+          ['Other', 3]
+        ]);
+
+    const options = {
+        'title': 'College Courses I\'ve Taken',
+        'width':500,
+        'height':350,
+        'backgroundColor': 'yellow',
+        'titleTextStyle': {color: 'black',
+        fontSize: 14,
+        bold: true,
+        italic: false
+        }    
+    };
+
+    const chart = new google.visualization.PieChart(
+      document.getElementById('college-chart'));
+    chart.draw(data, options);
+}
+
+async function drawGlobalWarmingChart() {
+    const response = await fetch('/global-warming');
+    const globalWarmingTemps = await response.json();
+
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Year');
+    data.addColumn('number', 'Temperatures');
+
+    Object.keys(globalWarmingTemps).forEach((year) => {
+      data.addRow([year, globalWarmingTemps[year]]);
+    });
+
+    const options = {
+        'title': 'Global Warming Temperatures',
+        'width':500,
+        'height':350,
+        'backgroundColor': 'white',
+        'titleTextStyle': {color: 'black',
+            fontSize: 14,
+            bold: true,
+            italic: false
+        }    
+    };
+
+    const chart = new google.visualization.LineChart(
+        document.getElementById('global-warming-chart'));
+    
+    chart.draw(data, options);
 }
